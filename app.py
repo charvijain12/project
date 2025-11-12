@@ -24,85 +24,106 @@ if not os.path.exists(QUERY_FILE):
 # ---------- PAGE CONFIG ----------
 st.set_page_config(page_title="Policy Insights Dashboard", page_icon="💼", layout="wide")
 
-# ---------- PASTEL THEME STYLING ----------
+# ---------- MODERN PASTEL STYLING ----------
 st.markdown("""
 <style>
-/* Sidebar */
+/* Sidebar fix - no box, full gradient like header */
 [data-testid="stSidebar"] {
-    background-color: #FFF8C6; /* Pastel yellow */
+    background: linear-gradient(180deg, #E6E6FA, #FFF8E1);
+    color: black !important;
+    border-right: 1px solid #ddd;
+    padding-top: 30px !important;
 }
 [data-testid="stSidebar"] * {
     color: black !important;
+    font-weight: 500;
 }
 
 /* Header */
 .header {
-    background: linear-gradient(90deg, #E6E6FA, #FFF8E1); /* Lavender to Cream */
-    padding: 15px;
-    border-radius: 10px;
+    background: linear-gradient(90deg, #E6E6FA, #FFF8E1);
+    padding: 18px;
+    border-radius: 8px;
     color: black;
     text-align: center;
-    margin-bottom: 20px;
-    border: 1px solid #e0e0e0;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 500;
+    box-shadow: 0px 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 25px;
 }
 
 /* Cards */
 .card {
     background: #ffffff;
-    border: 1px solid #eaeaea;
+    border: 1px solid #f0f0f0;
     padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0px 3px 8px rgba(0,0,0,0.05);
-    margin-bottom: 15px;
+    border-radius: 14px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.04);
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 14px rgba(0,0,0,0.07);
 }
 
 /* Chat bubbles */
 .chat-bubble-user {
-    background-color: #E8DAEF; /* pastel purple */
+    background-color: #E8DAEF;
     color: #000000;
     padding: 12px;
     border-radius: 10px;
     margin: 8px 0;
+    font-family: 'Segoe UI';
 }
 .chat-bubble-bot {
-    background-color: #F3E5F5; /* lavender light */
+    background-color: #F3E5F5;
     color: #000000;
     padding: 12px;
     border-radius: 10px;
     border-left: 4px solid #C39BD3;
     margin: 8px 0;
+    font-family: 'Segoe UI';
 }
 
 /* Buttons */
-button[kind="primary"] {
-    background-color: #D8BFD8 !important; /* pastel violet */
-    color: black !important;
-    border: none !important;
+div.stButton > button {
+    background: linear-gradient(90deg, #E6E6FA, #F3E5F5);
+    color: black;
+    border: 1px solid #C8A2C8;
+    border-radius: 8px;
+    padding: 0.6em 1.4em;
+    font-weight: 500;
+    box-shadow: 0px 3px 8px rgba(0,0,0,0.05);
+    transition: 0.3s ease;
+}
+div.stButton > button:hover {
+    background: linear-gradient(90deg, #F3E5F5, #E6E6FA);
+    box-shadow: 0px 5px 12px rgba(0,0,0,0.08);
 }
 
-/* Body */
+/* Text + background */
 body, [data-testid="stAppViewContainer"], [data-testid="stVerticalBlock"] {
     background-color: #FAFAFA;
     color: #000000;
+    font-family: 'Segoe UI', sans-serif;
 }
-
-/* Titles */
-h1, h2, h3, h4 {
-    color: #3D3D3D;
+h1, h2, h3 {
+    color: #333333;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# Header
-st.markdown("<div class='header'><h2>💼 Policy Insights Dashboard</h2><p>Understand Company Policies with AI Assistance</p></div>", unsafe_allow_html=True)
+# ---------- HEADER ----------
+st.markdown("<div class='header'><h2>💼 Policy Insights Dashboard</h2><p>Helping Employees Understand Company Policies with Ease</p></div>", unsafe_allow_html=True)
 
-# ---------- HELPER FUNCTIONS ----------
+# ---------- FUNCTIONS ----------
 def ask_ai(prompt):
     try:
         response = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[
-                {"role": "system", "content": "You are a friendly and professional HR assistant explaining company policies clearly."},
+                {"role": "system", "content": "You are a clear, friendly HR assistant who answers employee questions about company policies."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.3,
@@ -125,23 +146,23 @@ def show_policy_card(file_path):
     st.markdown(f"<div class='card'><b>📄 {file_name.replace('_', ' ').title()}</b><br>{download_link}</div>", unsafe_allow_html=True)
 
 # ---------- SIDEBAR ----------
-st.sidebar.title("🧭 Navigation")
+st.sidebar.markdown("<h3 style='color:black; font-weight:600;'>🧭 Navigation</h3>", unsafe_allow_html=True)
 page = st.sidebar.radio("", ["📚 All Policies", "📤 Upload or Choose & Ask", "💬 Ask Policy AI", "📊 My Analytics", "❓ My FAQs"])
-st.sidebar.markdown("---")
-st.sidebar.caption("🌸 Soft Pastel Edition")
+st.sidebar.markdown("<hr style='margin-top:15px; margin-bottom:10px; border: 1px solid #D8BFD8;'>", unsafe_allow_html=True)
+st.sidebar.caption("🌸 Pastel Lavender Edition")
 
 # ---------- MAIN CONTENT ----------
 
 # ---- TAB 1: All Policies ----
 if page == "📚 All Policies":
     st.title("📚 Company Policy Library")
-    st.markdown("Browse and download available company policies:")
+    st.markdown("Browse and download company policies from below:")
 
-    company_policies = [os.path.join(POLICY_DIR, f) for f in os.listdir(POLICY_DIR) if f.endswith(".pdf")]
-    if not company_policies:
+    files = [f for f in os.listdir(POLICY_DIR) if f.endswith(".pdf")]
+    if not files:
         st.info("No policies found in the 'policies/' folder.")
     else:
-        selected_policy = st.selectbox("Select a Policy", [os.path.basename(f) for f in company_policies])
+        selected_policy = st.selectbox("Select a Policy", files)
         show_policy_card(os.path.join(POLICY_DIR, selected_policy))
 
 # ---- TAB 2: Upload or Choose & Ask ----
@@ -152,8 +173,8 @@ elif page == "📤 Upload or Choose & Ask":
     with col1:
         uploaded = st.file_uploader("Upload a Policy PDF (temporary, not saved)", type=["pdf"])
     with col2:
-        company_files = [f for f in os.listdir(POLICY_DIR) if f.endswith(".pdf")]
-        selected = st.selectbox("Or Choose from Existing Policies", company_files if company_files else ["No policies yet"])
+        files = [f for f in os.listdir(POLICY_DIR) if f.endswith(".pdf")]
+        selected = st.selectbox("Or Choose from Existing Policies", files if files else ["No policies yet"])
 
     chosen_file = uploaded if uploaded else (selected if selected != "No policies yet" else None)
     file_content = None
@@ -163,7 +184,7 @@ elif page == "📤 Upload or Choose & Ask":
             reader = PdfReader(uploaded, strict=False)
             file_content = "\n".join(p.extract_text() for p in reader.pages if p.extract_text())
         except PdfReadError:
-            st.error("⚠️ Could not read uploaded file. Please upload a valid PDF.")
+            st.error("⚠️ Could not read uploaded file.")
     elif selected and selected != "No policies yet":
         with open(os.path.join(POLICY_DIR, selected), "rb") as f:
             reader = PdfReader(f, strict=False)
@@ -179,7 +200,7 @@ elif page == "📤 Upload or Choose & Ask":
             summary_button = st.button("📝 Summarize Policy")
 
         if ask_button and user_q.strip():
-            with st.spinner("Analyzing..."):
+            with st.spinner("Thinking..."):
                 answer = ask_ai(f"Policy Content:\n{file_content[:6000]}\n\nQuestion: {user_q}")
                 st.markdown(f"<div class='chat-bubble-user'><b>You:</b> {user_q}</div>", unsafe_allow_html=True)
                 st.markdown(f"<div class='chat-bubble-bot'><b>AI:</b> {answer}</div>", unsafe_allow_html=True)
@@ -187,16 +208,16 @@ elif page == "📤 Upload or Choose & Ask":
 
         elif summary_button:
             with st.spinner("Summarizing policy..."):
-                summary = ask_ai(f"Summarize this policy in 5 bullet points:\n{file_content[:6000]}")
+                summary = ask_ai(f"Summarize this policy in 5 short bullet points:\n{file_content[:6000]}")
                 st.markdown(f"<div class='chat-bubble-bot'><b>Summary:</b><br>{summary}</div>", unsafe_allow_html=True)
 
 # ---- TAB 3: Ask Policy AI ----
 elif page == "💬 Ask Policy AI":
     st.title("💬 General Policy AI Assistant")
-    question = st.text_area("Ask any question about company policies:")
+    question = st.text_area("Ask any HR or company policy question:")
     if st.button("Ask"):
         if question.strip():
-            with st.spinner("Thinking..."):
+            with st.spinner("Analyzing..."):
                 answer = ask_ai(f"Employee Question: {question}")
                 st.markdown(f"<div class='chat-bubble-user'><b>You:</b> {question}</div>", unsafe_allow_html=True)
                 st.markdown(f"<div class='chat-bubble-bot'><b>AI:</b> {answer}</div>", unsafe_allow_html=True)
@@ -220,7 +241,6 @@ elif page == "📊 My Analytics":
         ax.imshow(wordcloud, interpolation="bilinear")
         ax.axis("off")
         st.pyplot(fig)
-
         st.dataframe(df.sort_values("timestamp", ascending=False).head(10))
 
 # ---- TAB 5: FAQs ----
