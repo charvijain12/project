@@ -1,0 +1,13 @@
+streamlit
+pandas
+python-dotenv
+groq
+plotly
+pypdf
+wordcloud
+matplotlib
+chromadb
+sentence-transformers
+fastapi
+uvicorn
+python-multipart
