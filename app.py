@@ -199,7 +199,6 @@ if page == "Home":
         <p>
         This platform helps employees easily access, understand, and navigate company policies using AI-powered support.
         </p>
-
         <ul style="margin-left:20px;">
             <li>Browse official company policies</li>
             <li>Upload a policy temporarily and ask questions</li>
